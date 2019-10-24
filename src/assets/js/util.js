@@ -4,8 +4,8 @@ const appFwkey='2587l6QEQ3mPHJZgYTAznd2sN17mlBQZ4CgMNdYoEZJ3';
 const wxappid='wx62f265fe41b0f080';
 const appMode='nvlang';
 const picURL='';
-const appUrl='http://nvlang.baibangma.com';
-//const appUrl='http://www.nvlang.coma/';
+//const appUrl='http://nvlang.baibangma.com';
+const appUrl='http://www.nvlang.coma/';
 const apiUrl='/vueapi';
 const playform='vueapi';
 
@@ -58,14 +58,26 @@ function isEmpty(v) {
 // AJAX 请求
 // util.request(url,type,date)
 function request(_this, url, method = 'GET', data = {}) {
-	// if(method.toLowerCase()=='post'){
+
+	// if(method==='post'){
+	// 	if(typeof data == "object"){
+	// 		// var arr = []
+	// 		// for (let i in data) {
+	// 		// 	arr.push(data[i]); //属性
+	// 		// 	//arr.push(obj[i]); //值
+	// 		// }
+	// 		// data=arr;
+	// 		// data = JSON.stringify(data);
+	// 		// console.log(data)
+	// 	}
+	// 	//var contenttype='application/json; charset=UTF-8';
 	// 	var contenttype='application/x-www-form-urlencoded; charset=UTF-8';
 	// }else{
 	// 	var contenttype='application/json; charset=UTF-8';
 	// }
     //请求头
 	let header = {
-		// 'content-type': contenttype,
+		// 'Content-Type': contenttype,
 		'X-Klapi-Fwkey': appFwkey,
 		'X-Klapi-Pfalform': playform,
 		'X-Klapi-Ver': '1.0.0',
@@ -95,6 +107,7 @@ function request(_this, url, method = 'GET', data = {}) {
 	}
     
 	return new Promise(function (resolve, reject) {
+		console.log(data)
 		_this.axios({
 		  url: apiUrl+url,
 		  method: method,
@@ -103,10 +116,81 @@ function request(_this, url, method = 'GET', data = {}) {
 		}).then(function(res){
 			if (res.status === 200) {
 				res.data.stat = parseInt(res.data.stat);
-				if(res.data.stat == 2){
-					_this.$toast(res.data.msg);
-					_this.$router.replace({path: '/mine'});
+				if(res.data.msg){
+					if (res.data.msg_type===0){
+						var msgtype='error'
+					}
+					if (res.data.msg_type===1){
+						var msgtype='success'
+					}
+					if (res.data.msg_type===2){
+						var msgtype='info'
+					}
+					if (res.data.msg_type===3){
+						var msgtype='warning'
+					}
+					_this.$message({
+						message: res.data.msg,
+						type: msgtype
+					})
 				}
+				if(res.data.stat===9){
+					//未登录
+					_this.$router.push(`/login?redirect=${_this.$route.fullPath}`)
+				}
+				if(res.data.stat===8){//返回上一页
+					if (window.history.length <= 1) {
+						_this.$router.push({ path: "/" });
+						return false;
+					} else {
+						_this.$router.go(-1);
+					}
+				}
+				if(res.data.stat===6){//刷新页面
+					location.reload();
+				}
+				if(res.data.stat===5) {//重定向 push history栈中添加一个记录
+					if ('router_query' in res.data) {
+						if ('router_path' in res.data) {
+							// 带参数
+							 _this.$router.push({path: res.data.router_path|| '/', query: res.data.router_query})
+						}else {
+							// 带参数
+							_this.$router.push({path:  '/', query: res.data.router_query})
+						}
+					}else {
+						if ('router_path' in res.data) {
+							// 对象
+							_this.$router.push({path: res.data.router_path|| '/'})
+						}else {
+							// 首页
+							_this.$router.push({path:  '/'})
+						}
+					}
+				}
+				if(res.data.stat===4) {//跳转到指定url路径，但是history栈中不会有记录，点击返回会跳转到上上个页面
+					if ('router_query' in res.data) {
+						if ('router_path' in res.data) {
+							// 带参数
+							 _this.$router.replace({path: res.data.router_path|| '/', query: res.data.router_query})
+						}else {
+							// 带参数
+							_this.$router.replace({path:  '/', query: res.data.router_query})
+						}
+					}else {
+						if ('router_path' in res.data) {
+							// 对象
+							_this.$router.replace({path: res.data.router_path|| '/'})
+						}else {
+							// 首页
+							_this.$router.replace({path:  '/'})
+						}
+					}
+				}
+				// if(res.data.stat == 2){
+				// 	_this.$toast(res.data.msg);
+				// 	_this.$router.replace({path: '/mine'});
+				// }
 				resolve(res.data);
 			} else {
 			   //resolve(res);

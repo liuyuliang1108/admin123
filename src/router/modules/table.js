@@ -31,10 +31,16 @@ const tableRouter = {
       meta: { title: 'Inline Edit' }
     },
     {
-      path: 'pruview-code-table',
-      component: () => import('@/views/table/pruview_code/pruview-code-table'),
+      path: 'purview-code-table',
+      component: () => import('@/views/table/purview_code/purview-code-table'),
       name: '权限管理',
       meta: { title: '权限管理' }
+    }
+    ,{
+      path: 'purview-code-type-table',
+      component: () => import('@/views/table/purview_code/purview-code-type-table'),
+      name: '权限类型管理',
+      meta: { title: '权限类型管理' }
     },
     {
       path: 'complex-table',

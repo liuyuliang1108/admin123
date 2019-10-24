@@ -20,6 +20,11 @@
         </template>
       </el-table-column>
 
+      <el-table-column align="center" label="所属权限层" width="160">
+        <template slot-scope="scope">
+          <span>{{ scope.row.pc_pctid_str }}</span>
+        </template>
+      </el-table-column>
 
       <el-table-column  label="权限码">
         <template slot-scope="{row}">
@@ -91,7 +96,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="Actions" width="120">
+      <el-table-column align="center" label="操作" width="120">
         <template slot-scope="{row}">
           <el-button
             v-if="row.edit"
@@ -100,7 +105,7 @@
             icon="el-icon-circle-check-outline"
             @click="confirmEdit(row)"
           >
-            Ok
+            确定
           </el-button>
           <el-button
             v-else
@@ -109,7 +114,7 @@
             icon="el-icon-edit"
             @click="row.edit=!row.edit"
           >
-            Edit
+            编辑
           </el-button>
         </template>
       </el-table-column>
@@ -163,12 +168,8 @@ export default {
             v.originalTitle = v.pc_title //  will be used when user click the cancel botton
             v.originalCode = v.pc_code //  will be used when user click the cancel botton
             v.originalRemark = v.pc_remark //  will be used when user click the cancel botton
-            console.log(v)
             return v
           })
-        }else if(data.stat==9){
-          //未登录
-          _this.$router.push(`/login?redirect=${_this.$route.fullPath}`)
         }
       })
     },
@@ -187,10 +188,17 @@ export default {
       row.originalTitle = row.pc_title
       row.originalCode = row.pc_code
       row.originalRemark = row.pc_remark
-      this.$message({
-        message: '编辑成功',
-        type: 'success'
-      })
+        var _this = this
+        var param = {
+            'pc_id': row.pc_id,
+            'pc_title': row.pc_title,
+            'pc_code': row.pc_code,
+            'pc_remark': row.pc_remark,
+        };
+
+        _this.util.request(_this, '/purview_code/PurviewCodeTableEdit','post',param).then(function(data){
+            console.log(data);
+        })
     }
   }
 }
