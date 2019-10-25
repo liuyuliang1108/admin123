@@ -31,7 +31,8 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     open: true,
-    host: '192.168.0.143',
+    host: '192.168.1.101',//home
+    //host: '192.168.0.143',
     //  host: '192.168.0.105',
     // host: '192.168.0.102',
     // host: "192.168.0.131",
