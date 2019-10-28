@@ -153,6 +153,7 @@ export default {
   ,mounted() {
     var _this = this
     _this.getList()
+    _this.p = _this.aaaa()
   },
   methods: {
     getList() {
@@ -196,9 +197,26 @@ export default {
             'pc_remark': row.pc_remark,
         };
 
-        _this.util.request(_this, '/purview_code/PurviewCodeTableEdit','post',param).then(function(data){
-            console.log(data);
-        })
+      _this.util.request(_this, '/purview_code/PurviewCodeTableEdit', 'post', param).then(function(data) {
+        console.log(data)
+      })
+    },
+    aaaa() {
+      var _this = this
+      _this.util.getNumber().then(
+        function(data) {
+          console.log('resolved')
+          console.log(data)
+        },
+        function(reason, data) {
+          console.log('rejected1')
+          console.log(somedata) // 此处的somedata未定义
+          console.log(reason)
+          console.log('rejected2')
+        }).catch(function(reason) {
+        console.log('catch')
+        console.log(reason)
+      })
     }
   }
 }

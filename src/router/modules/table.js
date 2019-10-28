@@ -35,6 +35,11 @@ const tableRouter = {
       component: () => import('@/views/table/complex-table'),
       name: 'ComplexTable',
       meta: { title: 'Complex Table' }
+    }, {
+      path: 'test-form',
+      component: () => import('@/views/table/test-form'),
+      name: 'TestForm',
+      meta: { title: 'TestForm' }
     }
   ]
 }

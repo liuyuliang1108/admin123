@@ -15,9 +15,9 @@
         <el-tooltip content="Global Size" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
-<span class="right-menu-item">您好,{{$store.state.user.name}}</span>
-      </template>
 
+      </template>
+      <span class="right-menu-item">您好,{{$store.state.user.name}}</span>
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
           <img :src="avatar+'?imageView2/1/w/80/h/80'" class="user-avatar">

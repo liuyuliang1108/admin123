@@ -4,8 +4,8 @@ const appFwkey='2587l6QEQ3mPHJZgYTAznd2sN17mlBQZ4CgMNdYoEZJ3';
 const wxappid='wx62f265fe41b0f080';
 const appMode='nvlang';
 const picURL='';
-//const appUrl='http://nvlang.baibangma.com';
-const appUrl='http://www.nvlang.coma/';
+const appUrl='http://nvlang.baibangma.com';
+// appUrl='http://www.nvlang.coma/';
 const apiUrl='/vueapi';
 const playform='vueapi';
 
@@ -54,7 +54,21 @@ function isEmpty(v) {
       break;
   }
 }
-
+function getNumber(){
+	var p = new Promise(function(resolve, reject){
+		//做一些异步操作
+		setTimeout(function(){
+			var num = Math.ceil(Math.random()*10); //生成1-10的随机数
+			if(num<=5){
+				resolve(num);
+			}
+			else{
+				reject('数字太大了');
+			}
+		}, 2000);
+	});
+	return p;
+}
 // AJAX 请求
 // util.request(url,type,date)
 function request(_this, url, method = 'GET', data = {}) {
@@ -100,18 +114,19 @@ function request(_this, url, method = 'GET', data = {}) {
 		}).then(function(res){
 			if (res.status === 200) {
 				res.data.stat = parseInt(res.data.stat);
+				var msgtype='success';
 				if(res.data.msg){
 					if (res.data.msg_type===0){
-						var msgtype='error'
+						msgtype='error'
 					}
 					if (res.data.msg_type===1){
-						var msgtype='success'
+						msgtype='success'
 					}
 					if (res.data.msg_type===2){
-						var msgtype='info'
+						msgtype='info'
 					}
 					if (res.data.msg_type===3){
-						var msgtype='warning'
+						msgtype='warning'
 					}
 					_this.$message({
 						message: res.data.msg,
@@ -443,6 +458,7 @@ export default{
 	apiUrl: apiUrl,
 	utilmd5: utilmd5,
 	request: request,
+	getNumber: getNumber,
 	isEmpty: isEmpty,
 	isLogin: isLogin,
 	noLogin: noLogin,
