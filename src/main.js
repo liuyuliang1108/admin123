@@ -32,6 +32,9 @@ import { mockXHR } from '../mock'
 if (process.env.NODE_ENV === 'production') {
   mockXHR()
 }
+// 搜索表单
+import './assets/css/Form/search.css'
+import './assets/css/Layout/main.css'
 
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium' // set element-ui default size

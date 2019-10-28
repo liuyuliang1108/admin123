@@ -221,6 +221,44 @@ export const asyncRoutes = [
       }
     ]
   },
+  {
+    path: '/pruview_code',
+    component: Layout,
+    redirect: 'noRedirect',
+    name: 'pruview_code_name',
+    meta: {
+      title: '权限管理',
+      icon: 'example'
+    },
+    children: [
+      {
+        path: 'purview-code-type-table',
+        component: () => import('@/views/purview_code/purview-code-type-table'),
+        name: 'purview-code-type-table',
+        meta: { title: '权限类型管理', icon: 'list' }
+      },
+      {
+        path: 'purview-code-type-create',
+        component: () => import('@/views/purview_code/purview-code-type-create'),
+        name: 'purview-code-type-create',
+        meta: { title: '创建权限类型', icon: 'edit' }
+      },
+      {
+        path: 'purview-code-type-edit/:pct_id(\\d+)',
+        component: () => import('@/views/purview_code/purview-code-type-edit'),
+        name: 'purview-code-type-edit',
+        meta: { title: '编辑权限类型', noCache: true, activeMenu: '/purview_code/purview-code-type-table' },
+        hidden: true
+      },
+      {
+        path: 'purview-code-table',
+        component: () => import('@/views/purview_code/purview-code-table'),
+        name: 'purview-code-table',
+        meta: { title: '权限管理', icon: 'list' }
+      },
+      
+    ]
+  },
 
   {
     path: '/tab',

@@ -31,8 +31,8 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     open: true,
-    host: '192.168.1.101',//home
-    //host: '192.168.0.143',
+    //host: '192.168.1.101',//home
+    host: '192.168.0.149',
     //  host: '192.168.0.105',
     // host: '192.168.0.102',
     // host: "192.168.0.131",
@@ -45,8 +45,6 @@ module.exports = {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
         target:  process.env.VUE_APP_HOST+process.env.VUE_APP_BASE_API, //修改后台接口地址
-        // target: 'http://www.nvlang.coma/vueapi',
-        //  target: host+':'+${port}+'/vueapi',
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''

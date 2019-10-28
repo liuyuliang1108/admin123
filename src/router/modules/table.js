@@ -31,18 +31,6 @@ const tableRouter = {
       meta: { title: 'Inline Edit' }
     },
     {
-      path: 'purview-code-table',
-      component: () => import('@/views/table/purview_code/purview-code-table'),
-      name: '权限管理',
-      meta: { title: '权限管理' }
-    }
-    ,{
-      path: 'purview-code-type-table',
-      component: () => import('@/views/table/purview_code/purview-code-type-table'),
-      name: '权限类型管理',
-      meta: { title: '权限类型管理' }
-    },
-    {
       path: 'complex-table',
       component: () => import('@/views/table/complex-table'),
       name: 'ComplexTable',

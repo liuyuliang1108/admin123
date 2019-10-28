@@ -58,23 +58,7 @@ function isEmpty(v) {
 // AJAX 请求
 // util.request(url,type,date)
 function request(_this, url, method = 'GET', data = {}) {
-
-	// if(method==='post'){
-	// 	if(typeof data == "object"){
-	// 		// var arr = []
-	// 		// for (let i in data) {
-	// 		// 	arr.push(data[i]); //属性
-	// 		// 	//arr.push(obj[i]); //值
-	// 		// }
-	// 		// data=arr;
-	// 		// data = JSON.stringify(data);
-	// 		// console.log(data)
-	// 	}
-	// 	//var contenttype='application/json; charset=UTF-8';
-	// 	var contenttype='application/x-www-form-urlencoded; charset=UTF-8';
-	// }else{
-	// 	var contenttype='application/json; charset=UTF-8';
-	// }
+    
     //请求头
 	let header = {
 		// 'Content-Type': contenttype,
