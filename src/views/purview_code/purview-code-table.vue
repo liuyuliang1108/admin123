@@ -2,18 +2,6 @@
   <div class="app-container">
     <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
 
-
-      <!--<el-table-column width="120px" align="center" label="权限标题">-->
-        <!--<template slot-scope="scope">-->
-          <!--<span>{{ scope.row.pc_title }}</span>-->
-        <!--</template>-->
-      <!--</el-table-column>-->
-
-      <!--<el-table-column width="100px" label="Importance">-->
-        <!--<template slot-scope="scope">-->
-          <!--<svg-icon v-for="n in +scope.row.importance" :key="n" icon-class="star" class="meta-item__icon" />-->
-        <!--</template>-->
-      <!--</el-table-column>-->
       <el-table-column align="center" label="ID" width="80">
         <template slot-scope="scope">
           <span>{{ scope.row.pc_id }}</span>
@@ -119,14 +107,18 @@
         </template>
       </el-table-column>
     </el-table>
+
+    <!--分页-->
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
   </div>
 </template>
 
 <script>
 import { fetchList } from '@/api/article'
-
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 export default {
   name: 'InlineEditTable',
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -143,8 +135,9 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10
-      }
+        limit: 20
+      },
+      total: 0,//默认为0
     }
   },
   created() {
@@ -158,11 +151,12 @@ export default {
     getList() {
       var _this = this
       _this.listLoading = true;
-      _this.util.request(_this, '/purview_code/PurviewCodeTable').then(function(data){
+      _this.util.request(_this, '/purview_code/PurviewCodeTable','post',_this.listQuery).then(function(data){
         _this.listLoading = false
         console.log(data);
         if(data.stat == 1){
           const items = data.data
+          _this.total = data.total
           _this.list = items.map(v => {
             _this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
             v.originalTitle = v.pc_title //  will be used when user click the cancel botton

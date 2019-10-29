@@ -142,4 +142,31 @@ export default {
         margin: 0 auto;
         overflow: hidden;
     }
+  .el-form-item__label{
+    width: 100px;
+    padding: 0px 0px;
+    height: 28px;
+    line-height: 14px;
+    vertical-align:middle;
+    font-size: 14px;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 2px 0 0 2px;
+    text-align: center!important;
+    background-color: #FBFBFB;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    box-sizing: border-box;
+    cursor: default;
+    border-color: #e6e6e6;
+    margin-right: 15px;
+  }
+  .el-input__inner{
+    /*border-width: 1px;*/
+    /*border-style: solid;*/
+    /*border-radius: 2px 0 0 2px;*/
+  }
+
+
 </style>
