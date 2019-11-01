@@ -5,7 +5,7 @@ import Cookies from 'js-cookie'
 import 'normalize.css/normalize.css' // a modern alternative to CSS resets
 
 import Element from 'element-ui'
-
+Vue.use(Element);
 import './styles/element-variables.scss'
 
 import '@/styles/index.scss' // global css

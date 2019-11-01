@@ -241,7 +241,8 @@ export const asyncRoutes = [
         path: 'purview-code-type-create',
         component: () => import('@/views/purview_code/purview-code-type-create'),
         name: 'purview-code-type-create',
-        meta: { title: '创建权限类型', icon: 'edit' }
+        meta: { title: '创建权限类型', icon: 'edit' },
+        hidden: true
       },
       {
         path: 'purview-code-type-edit/:pct_id(\\d+)',
@@ -256,7 +257,20 @@ export const asyncRoutes = [
         name: 'purview-code-table',
         meta: { title: '权限管理', icon: 'list' }
       },
-      
+      {
+        path: 'purview-code-create',
+        component: () => import('@/views/purview_code/purview-code-create'),
+        name: 'purview-code-create',
+        meta: { title: '创建权限', icon: 'edit' },
+        hidden: true
+      },
+      {
+        path: 'purview-code-edit/:pc_id(\\d+)',
+        component: () => import('@/views/purview_code/purview-code-edit'),
+        name: 'purview-code-edit',
+        meta: { title: '编辑权限', noCache: true, activeMenu: '/purview_code/purview-code-table' },
+        hidden: true
+      },
     ]
   },
 

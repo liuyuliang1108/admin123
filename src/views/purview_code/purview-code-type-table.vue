@@ -123,20 +123,10 @@
       <el-table-column align="center" label="操作" width="120">
         <template slot-scope="{row}">
           <el-button
-                  v-if="row.edit"
-                  type="success"
-                  size="small"
-                  icon="el-icon-circle-check-outline"
-                  @click="confirmEdit(row)"
-          >
-            确定
-          </el-button>
-          <el-button
-                  v-else
                   type="primary"
                   size="small"
                   icon="el-icon-edit"
-                  @click="row.edit=!row.edit"
+                  @click="editData(row.pct_id)"
           >
             编辑
           </el-button>
@@ -151,7 +141,6 @@
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -222,32 +211,8 @@ export default {
         }
       })
     },
-    cancelEdit(row) {
-      row.pct_title = row.originalTitle
-      row.pct_code = row.originalCode
-      row.pct_remark = row.originalRemark
-      row.edit = false
-      this.$message({
-        message: '已恢复至原值',
-        type: 'warning'
-      })
-    },
-    confirmEdit(row) {
-      row.edit = false
-      row.originalTitle = row.pct_title
-      row.originalCode = row.pct_code
-      row.originalRemark = row.pct_remark
-      var _this = this
-      var param = {
-        'pct_id': row.pct_id,
-        'pct_title': row.pct_title,
-        'pct_code': row.pct_code,
-        'pct_remark': row.pct_remark,
-      };
-
-      _this.util.request(_this, '/purview_code_type/PurviewCodeTypeTableEdit','post',param).then(function(data){
-        console.log(data);
-      })
+    editData(pct_id){
+      this.$router.push({ path: "/pruview_code/purview-code-type-edit/"+pct_id})
     },
     setSort() {
       const el = this.$refs.dragTable.$el.querySelectorAll('.el-table__body-wrapper > table > tbody')[0]
@@ -290,25 +255,11 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-      resetTemp() {//重置为初始值
-          this.temp = {
-              pst_id: undefined,
-              pst_title:'',
-              pst_status:1,
-              pst_code:10000,
-              pst_sort:0,
-              pst_remark: '',
-          }
-      },
 
       handleCreate() {
         var _this = this
-          _this.resetTemp()
-          _this.dialogStatus = 'create'
-          _this.dialogFormVisible = true
-          _this.$nextTick(() => {
-              _this.$refs['dataForm'].clearValidate()
-          })
+        _this.$router.push({ path: "/pruview_code/purview-code-type-create"})
+
       },
       //格式转换
       formatJson(filterVal, jsonData) {

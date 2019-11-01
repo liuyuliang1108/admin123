@@ -1,15 +1,39 @@
 <!-- 搜索表单 -->
 <template>
-  <el-form ref="editForm" :size="size" inline :label-width="labelWidth" :model="editData" :rules="editRules" label-position="left" class="edit-form">
-    <el-form-item v-for="item in editCfg" :key="item.label" :label="item.label" :prop="item.prop">
+  <el-form ref="editForm" :size="size" inline  :model="editData" :rules="editRules"  class="edit-form">
+      <sticky :z-index="10" class="postInfo-container">
+          <el-button v-if="submitData" style="margin-left: 10px;" type="success" @click="submitForm(1)">
+              {{submitData}}
+          </el-button>
+
+          <el-button v-if="submitData1" style="margin-left: 10px;" type="primary" @click="submitForm(2)">
+              {{submitData1}}
+          </el-button>
+
+          <el-button v-if="clearData" type="warning" @click="clearForm">
+              {{clearData}}
+          </el-button>
+
+          <el-button v-if="returnData" type="info" @click="returnPage">
+              {{returnData}}
+          </el-button>
+
+      </sticky>
+    <el-form-item v-for="(item,index) in editCfg" style="width: 100%" :key="index"  :prop="item.prop" :class="computedClasses[index]" class="material-input__component">
+        <label class="el-form-item__label" v-if="item.label">
+            {{item.label}}
+        </label>
       <!-- 输入框 -->
       <el-input
+              class="material-input"
         v-if="item.type==='input'"
         v-model="editData[item.prop]"
         :disabled="item.disabled && item.disabled(editData)"
-        :style="{width:item.width}"
         clearable
+              :style="{width: item.width}"
         @change="item.change && item.change(editData[item.prop])"
+              @focus="handleMdFocus(index)"
+              @blur="handleMdBlur(index)"
       >
         <template v-if="item.prepend" slot="prepend">{{ item.prepend }}</template>
         <template v-if="item.append" slot="append">{{ item.append }}</template>
@@ -29,6 +53,7 @@
         v-model="editData[item.prop]"
         :disabled="item.disabled && item.disabled(editData)"
         @change="item.change && item.change(editData[item.prop])"
+        :width="item.width"
       >
         <el-option v-for="op in item.options" :key="op.value" :label="op.label" :value="op.value" />
       </el-select>
@@ -86,17 +111,24 @@
       <!-- <el-slider v-if="item.type==='Slider'" v-model="editData[item.prop]"></el-slider> -->
       <!-- 开关 -->
       <el-switch
-        v-if="item.type==='switch'"
+        v-if="item.type==='switch'"t
         v-model="editData[item.prop]"
         :disabled="item.disabled && item.disabled(editData)"
         @change="item.change && item.change(editData[item.prop])"
       />
+        <span class="material-input-bar"  :style="{width: item.width}" />
+        <label class="material-label">
+            {{item.placeholder}}
+        </label>
+
     </el-form-item>
   </el-form>
 </template>
 
 <script>
+    import Sticky from '@/components/Sticky' // 粘性header组件
 export default {
+    components: { Sticky },
     props:{
         labelWidth:{
             type:String,
@@ -117,56 +149,300 @@ export default {
         editRules:{
             type:Object,
             default:null
-        }
+        },
+        clearData:{
+            type:String,
+            default:null
+        },
+        submitData:{
+            type:String,
+            default:null
+        },
+        submitData1:{
+            type:String,
+            default:null
+        },
+        returnData:{
+            type:String,
+            default:null
+        },
     },
     data () {
         return {
-            that:this
+            that:this,
         };
     },
+    computed: {
+        computedClasses:function() {
+            var need_arr=[];
+            var _this=this;
+            _this.editCfg.forEach(function(data,index,arr){
+                need_arr.push({
+                    'material--active': data.focus,
+                    'material--disabled': data.disabled,
+                    'material--raised': Boolean(data.focus || _this.editData[data.prop]) // has value
+                })
+            });
+            return need_arr
+        }
+    },
     methods:{
-        // getThat(){
-        //     this.$emit('that',this)
-        // }
+        handleMdFocus(index) {
+            console.log(index)
+            var _this=this;
+            _this.editCfg[index].focus=true;
+            if (_this.editCfg[index].placeholder && _this.editCfg[index].placeholder !== '') {
+                _this.editCfg[index].fillPlaceHolder = _this.editCfg[index].placeholder
+            }
+        },
+        handleMdBlur(index) {
+            var _this=this;
+            _this.editCfg[index].focus = false
+            _this.editCfg[index].fillPlaceHolder = null
+        },
+
+        clearForm(){
+            this.$emit("clearForm");
+        }, submitForm(type){
+            this.$emit("submitForm",this.editData,type);
+        },
+        returnPage(){
+            //返回上一页
+            if (window.history.length <= 1) {
+                this.$router.push({ path: "/" });
+                return false;
+            } else {
+                this.$router.go(-1);
+            }
+        }
+    },
+    created() {
+
+    },
+    watch:{
+
     }
 
 }
 
 </script>
-<style>
+
+<style lang="scss" scoped>
+    // Fonts:
+    $font-size-base: 16px;
+    $font-size-small: 18px;
+    $font-size-smallest: 12px;
+    $font-weight-normal: normal;
+    $font-weight-bold: bold;
+    $apixel: 1px;
+    // Utils
+    $spacer: 6px;
+    $transition: 0.2s ease all;
+    $index: 0px;
+    $index-has-icon: 30px;
+    // Theme:
+    $color-white: white;
+    $color-grey: #304156;
+    $color-grey-light: #C4C4C4;
+    $color-blue: #2196F3;
+    $color-red: #F44336;
+    $color-black: black;
+    // Base clases:
+    %base-bar-pseudo {
+        content: '';
+        height: 1px;
+        width: 0;
+        bottom: 0;
+        position: absolute;
+        transition: $transition;
+    }
+
+    // Mixins:
+    @mixin slided-top() {
+        top: - ($font-size-base + $spacer);
+        left: 0;
+        font-size: $font-size-base;
+        font-weight: $font-weight-bold;
+    }
+
+    // Component:
+    .material-input__component {
+        margin-top: 25px;
+        position: relative;
+        * {
+            box-sizing: border-box;
+        }
+        .iconClass {
+            .material-input__icon {
+                position: absolute;
+                left: 0;
+                line-height: $font-size-base;
+                color: $color-blue;
+                top: $spacer;
+                width: $index-has-icon;
+                height: $font-size-base;
+                font-size: $font-size-base;
+                font-weight: $font-weight-normal;
+                pointer-events: none;
+            }
+            .material-label {
+                left: $index-has-icon;
+            }
+            .material-input {
+                text-indent: $index-has-icon;
+
+            }
+        }
+        .material-input {
+            font-size: $font-size-base;
+            padding: $spacer $spacer $spacer - $apixel * 10 $spacer / 2;
+            display: block;
+            width: 100%;
+            border: none;
+            line-height: 1;
+            border-radius: 0;
+            &:focus {
+                outline: none;
+                border: none;
+                border-bottom: 1px solid transparent; // fixes the height issue
+            }
+        }
+        .material-label {
+            font-weight: $font-weight-normal;
+            position: absolute;
+            pointer-events: none;
+            left: $index;
+            top: 0;
+            transition: $transition;
+            font-size: $font-size-small;
+        }
+        .material-input-bar {
+            position: relative;
+            display: block;
+            width: 100%;
+            &:before {
+                @extend %base-bar-pseudo;
+                left: 50%;
+            }
+            &:after {
+                @extend %base-bar-pseudo;
+                right: 50%;
+            }
+        }
+        // Disabled state:
+        &.material--disabled {
+            .material-input {
+                border-bottom-style: dashed;
+            }
+        }
+        // Raised state:
+        &.material--raised {
+            .material-label {
+                @include slided-top();
+            }
+        }
+        // Active state:
+        &.material--active {
+            .material-input-bar {
+                &:before,
+                &:after {
+                    width: 50%;
+                }
+            }
+        }
+    }
+
+    .material-input__component {
+        background: $color-white;
+        /deep/ .el-input__inner{
+            color: #3d4145;
+        }
+        .material-input {
+            background: $color-white;
+            color: $color-black;
+            text-indent: $index;
+            border-bottom: 1px solid $color-grey-light;
+            /deep/ .el-input__inner{
+                border-width: 0px;
+                width: 100%;
+                color: #3d4145;
+                vertical-align:middle;
+                caret-color:#2196F3;
+            }
+        }
+        .material-label {
+            vertical-align:middle;
+            color: $color-grey;
+        }
+        .material-input-bar {
+            &:before,
+            &:after {
+                background: $color-blue;
+            }
+        }
+        /deep/ div.el-form-item__content{
+            width: 100%;
+        }
+
+        /deep/ .el-form-item__label{
+            width: 100px;
+            padding: 6px 0px;
+            height: 28px;
+            line-height: 14px;
+            vertical-align:middle;
+            font-size: 14px;
+            border-width: 1px;
+            border-style: solid;
+            border-radius: 2px 0 0 2px;
+            text-align: center!important;
+            background-color: #FBFBFB;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            box-sizing: border-box;
+            cursor: default;
+            border-color: #e6e6e6;
+            margin-right: 15px;
+        }
+        // Active state:
+        &.material--active {
+            .material-label {
+                color: $color-blue;
+            }
+        }
+        // Errors:
+        &.material--has-errors {
+            &.material--active .material-label {
+                color: $color-red;
+            }
+            .material-input-bar {
+                &:before,
+                &:after {
+                    background: transparent;
+                }
+            }
+        }
+    }
+
     .edit-form {
         position: relative;
-        width: 520px;
         max-width: 100%;
-        padding: 160px 35px 0;
+        min-width: 45%;
+        padding: 15px 15px 0;
         margin: 0 auto;
         overflow: hidden;
+        .postInfo-container {
+            position: relative;
+            /*background-color: #f0f2f5;*/
+            margin-bottom: 10px;
+            .postInfo-container-item {
+                float: left;
+            }
+        }
     }
-  .el-form-item__label{
-    width: 100px;
-    padding: 0px 0px;
-    height: 28px;
-    line-height: 14px;
-    vertical-align:middle;
-    font-size: 14px;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 2px 0 0 2px;
-    text-align: center!important;
-    background-color: #FBFBFB;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    box-sizing: border-box;
-    cursor: default;
-    border-color: #e6e6e6;
-    margin-right: 15px;
-  }
-  .el-input__inner{
-    /*border-width: 1px;*/
-    /*border-style: solid;*/
-    /*border-radius: 2px 0 0 2px;*/
-  }
 
+
+</style>
+<style>
 
 </style>

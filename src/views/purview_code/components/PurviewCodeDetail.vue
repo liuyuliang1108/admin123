@@ -20,7 +20,7 @@
 <script>
   import cesEdit from '@/components/common/Form/editForm'
   export default {
-    name: 'PurviewCodeTypeDetail',
+    name: 'PurviewCodeDetail',
     components: {
       cesEdit
     },
@@ -33,13 +33,13 @@
         },
         editRules: {
         },
-        pct_id:0,//默认主键id为0 新增
+        pc_id:0,//默认主键id为0 新增
         that: this
       }
     },
     created() {
       var _this = this;
-        _this.pct_id = _this.$route.params.pct_id;
+        _this.pc_id = _this.$route.params.pc_id;
       _this.getData();
     },
       mounted: function() {
@@ -49,7 +49,7 @@
       //获取初始数据
 getData() {
   var _this = this
-  _this.util.request(_this, '/purview_code_type/getDataPurviewCodeType', 'post', {pct_id: _this.pct_id}).then(function (data) {
+  _this.util.request(_this, '/purview_code/getFormDataPurviewCode', 'post', {pc_id: _this.pc_id}).then(function (data) {
 
     console.log(data);
     if (data.stat == 1) {
@@ -72,7 +72,7 @@ _this.editRules=data.data.editRules;
             var _this=this;
             Object.assign(post_data,{submitType:type});
             console.log(post_data);
-            _this.util.request(_this, '/purview_code_type/saveDataPurviewCodeType', 'post', post_data).then(function (data) {
+            _this.util.request(_this, '/purview_code/saveDataPurviewCode', 'post', post_data).then(function (data) {
                 console.log(data);
                 if (data.stat == 1) {
                     console.log(data);
@@ -108,7 +108,7 @@ _this.editRules=data.data.editRules;
       position: relative;
       max-width: 100%;
       min-width: 45%;
-      padding: 40px 35px 0;
+      padding: 15px 15px 0;
       margin: 0 auto;
       overflow: hidden;
     }

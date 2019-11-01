@@ -2,23 +2,17 @@
 <template>
 <section class="ces-table-page">
   <!-- 表格操作按钮 -->
-    <section class="ces-handle" v-if='isHandle'>
-      <el-button 
-        v-for='item in tableHandles' 
-        :key='item.label'
-        :size="size || item.size" 
-        :type="item.type" 
-        :icon='item.icon' 
-        @click="item.handle(that)">{{item.label}}</el-button>
-    </section>
     <!-- 数据表格 -->
     <section class="ces-table">
-        <el-table  :data='tableData' :size='size' height="100%" 
-          :border  ='isBorder'
-          @select='select' 
+        <el-table
+          :data='tableData'
+          :size='size'
+          :border='isBorder'
+          @select='select'
           @select-all='selectAll'
-          v-loading='loading' 
+          v-loading='listLoading'
           :defaultSelections='defaultSelections'
+          :height="tableHeight"
           ref="cesTable">
             <el-table-column v-if="isSelection" type="selection" align="center" ></el-table-column>
             <el-table-column v-if="isIndex" type="index" :label="indexLabel" align="center" width="50"></el-table-column>
@@ -34,15 +28,11 @@
                 <template slot-scope="scope" >
                   <!-- html -->
                   <span v-if="item.type==='html'" v-html="item.html(scope.row)"></span>
-                  <!-- 按钮 -->
-                  <span v-if="item.type==='button'" >
-                    <el-button v-for="btn in item.btnList" :key="btn.label"
-                      :disabled="btn.disabled && btn.disabled(scope.row)"
-                      :type="btn.type" 
-                      :size="size || btn.size" 
-                      :icon="btn.icon" 
-                      @click="btn.handle(that,scope.row)">{{btn.label}}</el-button>
-                    </span>
+
+                    <!--操作-->
+                    <slot name="action" :row="scope.row" v-if="item.type==='action'" >
+                    </slot>
+
                   <!-- 输入框 -->
                   <el-input v-if="item.type==='input'" v-model="scope.row[item.prop]" :size="size || btn.size"
                     :disabled="item.isDisabled && item.isDisabled(scope.row)"
@@ -87,6 +77,7 @@
                     :class="item.itemClass && item.item.itemClass(scope.row)">{{(item.formatter && item.formatter(scope.row)) || scope.row[item.prop]}}</span>
                 </template>
               </el-table-column>
+
         </el-table>
     </section>
     <!-- 分页 -->
@@ -95,9 +86,9 @@
             @current-change="handleCurrentChange"
             @size-change="handleSizeChange"
             layout="total,sizes ,prev, pager, next,jumper"
-            :page-size="tablePage.pageSize"
-            :current-page="tablePage.pageNum"
-            :total="tablePage.total"
+            :page-size="listQuery.limit"
+            :current-page="listQuery.page"
+            :total="total"
         ></el-pagination>
     </section>
 </section>
@@ -111,10 +102,7 @@ export default {
     // 表格型号：mini,medium,small
     size:{type:String,default:'medium'},
     isBorder:{type:Boolean,default:true},
-    loading:{type:Boolean,default:false},
-    // 表格操作
-    isHandle:{type:Boolean,default:false},
-    tableHandles:{type:Array,default:()=>[]},
+      listLoading:{type:Boolean,default:false},
     // 表格数据
     tableData:{ type:Array,default:()=>[]},
     // 表格列配置
@@ -128,8 +116,12 @@ export default {
     // 是否显示分页
     isPagination:{type:Boolean,default:true},
     // 分页数据
-    tablePage:{ type:Object,default:()=>({pageSize:10,pageNum:1,total:0})},
-    
+      listQuery:{ type:Object,default:()=>({limit:20,page:1})},
+      //总数
+      total: {
+          type: Number,
+          default: 0
+      },
   },
   data(){
     return {
@@ -148,6 +140,15 @@ export default {
         })      
     }
   },
+    computed: {
+      //计算表格高度
+        tableHeight:function(){
+            console.log(window.innerHeight);
+            let need_height=140;
+            need_height=this.isPagination?need_height+30:need_height;
+            return this.isPagination?(window.innerHeight-need_height)+'px':(window.innerHeight-need_height)+'px';
+        }
+    },
   methods:{
     // 表格勾选
     select(rows,row){
@@ -159,12 +160,12 @@ export default {
     },
     // 
     handleCurrentChange(val){
-      this.tablePage.pageNum = val;
-      this.$emit('refresh');
+      this.listQuery.page = val;
+      this.$emit('refresh',this.listQuery);
     },
     handleSizeChange(val) {
-      this.tablePage.pageSize = val;
-      this.$emit('refresh');
+      this.listQuery.limit = val;
+      this.$emit('refresh',this.listQuery);
     },
     
     // tableRowClassName({rowIndex}) {
